@@ -14,7 +14,9 @@ export function readFile(phase, cb) {
 export function addPosition(newPosition, phase, cb) {
     readFile(phase, (jsonString) => {
         const positions = JSON.parse(jsonString)
-        const maxId = Math.max(...(positions.map((pos) => parseInt(pos.id))))
+        const values = positions.map((pos) => parseInt(pos.id))
+        values.push(0)
+        const maxId = Math.max(...values)
         positions.push({...newPosition, id: maxId + 1})
         fs.writeFile(`./phase${phase}.json`, JSON.stringify(positions), err => {
             if(err) {
@@ -93,6 +95,22 @@ export function editPosition(newPosition, phase, cb) {
             return pos
         })
         fs.writeFile(`./phase${phase}.json`, JSON.stringify(newPositions), err => {
+            if(err) {
+                cb(err)
+            } else {
+                cb({ok: 1})
+            }
+        })
+    })
+}
+
+export function deletePosition(phase, id, cb) {
+    readFile(phase, (jsonString) => {
+        const positions = JSON.parse(jsonString)
+        const filteredPositions = positions.filter((pos) => {
+            return parseInt(pos.id) !== parseInt(id)
+        })
+        fs.writeFile(`./phase${phase}.json`, JSON.stringify(filteredPositions), err => {
             if(err) {
                 cb(err)
             } else {

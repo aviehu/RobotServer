@@ -1,13 +1,27 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import {readFile, addPosition, moveUp, moveDown, getPosition, editPosition} from "./fileHandler.js";
+import {
+    readFile,
+    addPosition,
+    moveUp,
+    moveDown,
+    getPosition,
+    editPosition,
+    deletePosition
+} from "./fileHandler.js";
+import positionToPercentage from './positionToPercentage.json' assert {type: 'json'};
+
 const app = express()
 const port = 3001
 
 app.use(cors())
 
 app.use(bodyParser.json())
+
+app.get('/percentage', (req, res) => {
+    res.send(positionToPercentage)
+})
 
 app.get('/:phase', (req, res) => {
     const { phase } = req.params
@@ -48,6 +62,13 @@ app.get('/moveup/:phase/:id', (req, res) => {
 app.get('/moveDown/:phase/:id', (req, res) => {
     const { phase, id } = req.params
     moveDown(phase,id, (ans) => {
+        res.send(ans)
+    })
+})
+
+app.delete('/:phase/:id', (req, res) => {
+    const { phase, id } = req.params
+    deletePosition(phase, id, (ans) => {
         res.send(ans)
     })
 })

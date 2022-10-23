@@ -11,6 +11,7 @@ import {
     deletePosition
 } from "./fileHandler.js";
 import positionToPercentage from './positionToPercentage.json' assert {type: 'json'};
+import sendOsc from "./sendOsc.js";
 
 const app = express()
 const port = 3001
@@ -21,6 +22,12 @@ app.use(bodyParser.json())
 
 app.get('/percentage', (req, res) => {
     res.send(positionToPercentage)
+})
+
+app.get('/startphase/:phase', (req, res) => {
+    const { phase } = req.params
+    sendOsc(phase)
+    res.send({ok: 1})
 })
 
 app.get('/:phase', (req, res) => {
@@ -73,6 +80,8 @@ app.delete('/:phase/:id', (req, res) => {
     })
 })
 
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+

@@ -1,5 +1,4 @@
 import fs from "fs";
-import e from "express";
 
 export function readFile(phase, cb) {
     fs.readFile(`./phase${phase}.json`, "utf8", (err, jsonString) => {

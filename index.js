@@ -10,8 +10,7 @@ import {
     editPosition,
     deletePosition
 } from "./fileHandler.js";
-import positionToPercentage from './positionToPercentage.json' assert {type: 'json'};
-import sendOsc from "./sendOsc.js";
+import runPhase from "./runPhase.js";
 
 const app = express()
 const port = 3001
@@ -20,13 +19,9 @@ app.use(cors())
 
 app.use(bodyParser.json())
 
-app.get('/percentage', (req, res) => {
-    res.send(positionToPercentage)
-})
-
 app.get('/startphase/:phase', (req, res) => {
     const { phase } = req.params
-    sendOsc(phase)
+    runPhase(phase)
     res.send({ok: 1})
 })
 
@@ -80,8 +75,6 @@ app.delete('/:phase/:id', (req, res) => {
     })
 })
 
-
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
-

@@ -8,15 +8,15 @@
   },
   {
     "position": 1,
-    "leftHand": 0,
-    "rightHand": 0,
+    "leftHand": 0.0,
+    "rightHand": 0.0,
     "leftLeg": 13.23,
     "rightLeg": 13.23
   },
   {
     "position": 2,
-    "leftHand": 0,
-    "rightHand": 0,
+    "leftHand": 0.0,
+    "rightHand": 0.0,
     "leftLeg": 33.93,
     "rightLeg": 33.93
   },
@@ -75,5 +75,12 @@
     "rightHand": 69.93,
     "leftLeg": 0,
     "rightLeg": 0
+  },
+  {
+    "position": 11,
+    "leftHand": 50.0,
+    "rightHand": 50.0,
+    "leftLeg": 50.0,
+    "rightLeg": 50.0
   }
 ]

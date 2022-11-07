@@ -11,6 +11,7 @@ import {
     deletePosition
 } from "./fileHandler.js";
 import runPhase from "./runPhase.js";
+import { stopMessageQueue, reset } from './sendOsc.js'
 
 const app = express()
 const port = 3001
@@ -22,6 +23,16 @@ app.use(bodyParser.json())
 app.get('/startphase/:phase', (req, res) => {
     const { phase } = req.params
     runPhase(phase)
+    res.send({ok: 1})
+})
+
+app.get('/reset', (req, res) => {
+    reset()
+    res.send({ok: 1})
+})
+
+app.get('/stop', (req,res) => {
+    stopMessageQueue()
     res.send({ok: 1})
 })
 
@@ -75,6 +86,8 @@ app.delete('/:phase/:id', (req, res) => {
     })
 })
 
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+

@@ -1,12 +1,16 @@
 import osc from 'osc'
+import ip from 'ip'
 import wss from "./webSocket.js";
 
+let messageCounter = 0
 const oscPort = new osc.UDPPort({
     remotePort: 8888,
-    remoteAddress:"10.0.0.1",
-    localPort: 4444
+    remoteAddress:"127.0.0.1",
+    localPort: 4444,
+    localAddress: "0.0.0.0"
 });
 
+console.log(`public IP address ${ip.address('public')}`)
 oscPort.open();
 oscPort.on("ready", function () {
     console.log("osc ready")
@@ -19,6 +23,7 @@ oscPort.on("error", function (error) {
 const messageQueue = []
 
 oscPort.on("message", (oscMsg, timeTag, info) => {
+    console.log(`OSC message received address-${oscMsg.address}`)
     if(oscMsg.address === '/ack' && messageQueue.length > 1) {
         const oldMessage = messageQueue.shift()
         sendWsMessage(`Waiting in pose ${oldMessage.position} for ${oldMessage.timeToStay} seconds`)
@@ -69,10 +74,10 @@ export default function sendMessages(messages) {
 }
 
 function sendOsc(message) {
-    const { leftHand, rightHand, leftLeg, rightLeg, timeToGet, position } = message
+    const { leftHand, rightHand, leftLeg, rightLeg, position, leftHandPower, rightHandPower, leftLegPower, rightLegPower } = message
     console.log(`Moving to position ${position}`)
-    sendWsMessage(`Moving to position ${position} in ${timeToGet} seconds`)
-    oscPort.send({
+    sendWsMessage(`Moving to position ${position}`)
+    const payload = {
         address: "/posture",
         args: [
             {
@@ -93,10 +98,37 @@ function sendOsc(message) {
             },
             {
                 type: "i",
-                value: parseInt(timeToGet) * 1000
-            }
+                value: -1
+            },
+            {
+                type: "s",
+                value: ip.address('public')
+            },
+            {
+                type: "i",
+                value: messageCounter,
+            },
+            {
+                type: "i",
+                value: leftHandPower,
+            },
+            {
+                type: "i",
+                value: rightHandPower,
+            },
+            {
+                type: "i",
+                value: leftLegPower,
+            },
+            {
+                type: "i",
+                value: rightLegPower,
+            },
         ]
-    });
+    }
+    console.log('sending payload', payload)
+    oscPort.send(payload);
+    messageCounter++
 }
 
 function sendWsMessage(message) {

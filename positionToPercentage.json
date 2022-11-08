@@ -22,10 +22,10 @@
   },
   {
     "position": 3,
-    "leftHand": 0,
-    "rightHand": 0,
-    "leftLeg": 56.57,
-    "rightLeg": 56.57
+    "leftHand": 45,
+    "rightHand": 40,
+    "leftLeg": 0,
+    "rightLeg": 0
   },
   {
     "position": 4,

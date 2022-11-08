@@ -5,7 +5,7 @@ import wss from "./webSocket.js";
 let messageCounter = 0
 const oscPort = new osc.UDPPort({
     remotePort: 8888,
-    remoteAddress:"127.0.0.1",
+    remoteAddress:"10.0.0.1",
     localPort: 4444,
     localAddress: "0.0.0.0"
 });

@@ -3,6 +3,7 @@ import ip from 'ip'
 import wss from "./webSocket.js";
 
 let messageCounter = 0
+let messageTimeOut = null
 const oscPort = new osc.UDPPort({
     remotePort: 8888,
     remoteAddress:"10.0.0.1",
@@ -27,7 +28,7 @@ oscPort.on("message", (oscMsg, timeTag, info) => {
     if(oscMsg.address === '/ack' && messageQueue.length > 1) {
         const oldMessage = messageQueue.shift()
         sendWsMessage(`Waiting in pose ${oldMessage.position} for ${oldMessage.timeToStay} seconds`)
-        setTimeout(() => {
+        messageTimeOut = setTimeout(() => {
             const [newMessage] = messageQueue
             sendOsc(newMessage)
         }, oldMessage.timeToStay * 1000)
@@ -38,8 +39,10 @@ oscPort.on("message", (oscMsg, timeTag, info) => {
 })
 
 export function reset() {
-    if(messageQueue > 0) {
-        messageQueue.length = 0
+    messageQueue.length = 0
+    if(messageTimeOut) {
+        clearTimeout(messageTimeOut)
+        messageTimeOut = null
     }
     sendOsc({
         leftHand: 0,
@@ -49,11 +52,15 @@ export function reset() {
         timeToGet: 3,
         position: 0
     })
-
 }
 
 export function stopMessageQueue() {
     messageQueue.length = 0
+    if(messageTimeOut) {
+        clearTimeout(messageTimeOut)
+        messageTimeOut = null
+    }
+
     sendWsMessage("Stopped running phase")
     setTimeout(() => {
         sendWsMessage("Idle")
